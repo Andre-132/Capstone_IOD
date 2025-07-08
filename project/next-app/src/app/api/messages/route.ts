@@ -11,8 +11,10 @@ let messages = [
 ];
 
 export async function GET(request: Request) {
+  console.log("GET request hit");
   const { searchParams } = new URL(request.url);
   const postId = searchParams.get("postId");
+  console.log(postId);
   if (!postId)
     return NextResponse.json({ error: "Missing postId" }, { status: 400 });
   const filtered = messages.filter((msg) => msg.postId === postId);

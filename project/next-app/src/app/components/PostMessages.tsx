@@ -31,11 +31,12 @@ export default function PostWithMessages({
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-
+  console.log(messages);
   useEffect(() => {
     fetch(`/api/messages?postId=${post.id}`)
       .then((res) => res.json())
       .then((data) => {
+        console.log("fetch messages", data);
         setMessages(data);
         setLoading(false);
       });
@@ -88,6 +89,7 @@ export default function PostWithMessages({
               <li key={msg.id} className="border p-2 rounded relative">
                 <p className="font-medium">{msg.author}</p>
                 <p className="text-xs text-gray-400">
+                  <p>{msg.content}</p>
                   {new Date(msg.date).toLocaleString()}
                 </p>
                 <DeleteButton

@@ -24,21 +24,7 @@ function AboutPage() {
           display: "flex",
         }}
       >
-        <div
-          style={{
-            width: "50%",
-            position: "absolute",
-            top: "0",
-            left: "0",
-            bottom: "0",
-            background:
-              "linear-gradient(to bottom right, black, rgb(107, 114, 128), black)",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div className="w-1/2 absolute top-0 left-0 bottom-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 flex flex-col justify-center items-center">
           <div className="absolute inset-0 overflow-hidden pointer-events-none"></div>
           <div className="flex items-center justify-center z-10">
             <div className="w-80 h-80 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-2xl flex items-center justify-center hover:scale-105 transition-transform duration-300">
@@ -73,7 +59,6 @@ function AboutPage() {
           </div>
         </div>
       </div>
-
       <div className="absolute top-0 left-0 right-0 h-16 w-full flex justify-between items-start px-4 pt-4 z-50">
         <Breadcrumb>
           <BreadcrumbList>

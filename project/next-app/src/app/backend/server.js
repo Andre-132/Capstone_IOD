@@ -6,7 +6,7 @@ require("dotenv").config();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to my MongoDB blog lab." });
+  res.json({ message: "Welcome" });
 });
 
 const postRoutes = require("./routes/postRoutes");

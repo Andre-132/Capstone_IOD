@@ -41,17 +41,15 @@ function AboutPage() {
         <div className="w-1/2 p-16 flex flex-col justify-center relative overflow-y-auto ml-auto">
           <div className="text-center space-y-8">
             <div className="space-y-4">
-              <h1 className="text-4xl font-bold font-serif text-white-800">
-                My Vision
-              </h1>
-              <p className="text-xl text-white-600 font-serif">
+              <h1 className="text-4xl font-bold text-white-800">My Vision</h1>
+              <p className="text-xl text-white-600">
                 My vision with this application is to provide bikers like myself
                 a safe and comfortable riding experience.
               </p>
-              <h2 className="text-3xl font-bold font-serif text-white-800 mt-8">
+              <h2 className="text-3xl font-bold text-white-800 mt-8">
                 My Purpose
               </h2>
-              <p className="text-xl text-white-600 font-serif">
+              <p className="text-xl text-white-600">
                 With my focus being tailored to rider safety along with an
                 interactive community of bikers alike.
               </p>

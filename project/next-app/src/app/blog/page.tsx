@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import PostWithMessages from "../components/PostMessages";
-import ModeToggle from "@/app/components/ui/mode-toggle";
+import { Heart } from "lucide-react";
 import { SlashIcon } from "lucide-react";
 import {
   Breadcrumb,
@@ -19,7 +18,149 @@ interface Post {
   author: string;
   date: string;
   content: string;
+  likes?: number;
 }
+
+interface LikeButtonProps {
+  initialLikes?: number;
+  postId: string;
+  onLikeUpdate?: (postId: string, newLikes: number, isLiked: boolean) => void;
+}
+
+const SleekLikeButton: React.FC<LikeButtonProps> = ({
+  initialLikes = 0,
+  postId,
+  onLikeUpdate,
+}) => {
+  const [likes, setLikes] = useState(initialLikes);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleLike = async () => {
+    if (isAnimating) return;
+
+    setIsAnimating(true);
+
+    const newLikedState = !isLiked;
+    const newLikes = newLikedState ? likes + 1 : likes - 1;
+
+    setLikes(newLikes);
+    setIsLiked(newLikedState);
+
+    if (onLikeUpdate) {
+      onLikeUpdate(postId, newLikes, newLikedState);
+    }
+
+    try {
+    } catch (error) {
+      console.error("Failed to update like:", error);
+    }
+
+    setTimeout(() => setIsAnimating(false), 300);
+  };
+
+  return (
+    <button
+      onClick={handleLike}
+      className={`
+        group relative flex items-center gap-2 px-4 py-2 rounded-full
+        transition-all duration-300 ease-out backdrop-blur-sm
+        hover:scale-105 active:scale-95
+        bg-white/5 border border-white/20 hover:bg-white/10 hover:border-white/30
+        ${isLiked ? "bg-red-500/20 border-red-400/40" : ""}
+        ${isAnimating ? "animate-pulse" : ""}
+      `}
+      disabled={isAnimating}
+    >
+      <div
+        className={`
+        absolute inset-0 rounded-full opacity-0 transition-opacity duration-300
+        ${
+          isLiked
+            ? "bg-gradient-to-r from-red-500/20 to-pink-500/20 opacity-100"
+            : ""
+        }
+        group-hover:opacity-50
+      `}
+      />
+
+      <Heart
+        className={`
+          relative z-10 w-5 h-5 transition-all duration-300
+          ${
+            isLiked
+              ? "text-red-400 fill-red-400 scale-110"
+              : "text-white/70 group-hover:text-white scale-100"
+          }
+          ${isAnimating ? "animate-bounce" : ""}
+        `}
+      />
+
+      <span
+        className={`
+        relative z-10 text-sm font-medium transition-all duration-300
+        ${isLiked ? "text-red-300" : "text-white/70 group-hover:text-white"}
+      `}
+      >
+        {likes}
+      </span>
+
+      {isAnimating && (
+        <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping" />
+      )}
+
+      {isLiked && isAnimating && (
+        <>
+          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <Heart className="w-3 h-3 text-red-400 fill-red-400 opacity-80" />
+          </div>
+          <div className="absolute -top-1 left-1/4 transform -translate-x-1/2 animate-bounce delay-75">
+            <Heart className="w-2 h-2 text-pink-400 fill-pink-400 opacity-60" />
+          </div>
+          <div className="absolute -top-1 right-1/4 transform translate-x-1/2 animate-bounce delay-150">
+            <Heart className="w-2 h-2 text-red-300 fill-red-300 opacity-60" />
+          </div>
+        </>
+      )}
+    </button>
+  );
+};
+
+const PostWithMessages = ({ post, onDelete, onLikeUpdate }) => {
+  return (
+    <article className="bg-white/5 border border-white/20 p-6 rounded-lg shadow-xl backdrop-blur-sm">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-xl font-semibold text-white mb-2">
+            {post.title}
+          </h3>
+          <p className="text-white/60 text-sm">
+            By {post.author} • {post.date}
+          </p>
+        </div>
+        <button
+          onClick={onDelete}
+          className="text-red-400 hover:text-red-300 text-sm px-3 py-1 rounded border border-red-400/20 hover:border-red-300/40 transition-colors"
+        >
+          Delete
+        </button>
+      </div>
+
+      <div className="text-white/80 mb-6 leading-relaxed">{post.content}</div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <SleekLikeButton
+            initialLikes={post.likes || 0}
+            postId={post.id}
+            onLikeUpdate={onLikeUpdate}
+          />
+        </div>
+        <div className="text-white/40 text-sm">#{post.id.slice(0, 8)}</div>
+      </div>
+    </article>
+  );
+};
 
 function Blog() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -39,7 +180,7 @@ function Blog() {
       });
   }, []);
 
-  async function handleNewPost(e: React.FormEvent) {
+  async function handleNewPost(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setPosting(true);
     const res = await fetch("/api/posts", {
@@ -62,6 +203,18 @@ function Blog() {
       body: JSON.stringify({ id }),
     });
     setPosts((prev) => prev.filter((post) => post.id !== id));
+  }
+
+  function handleLikeUpdate(
+    postId: string,
+    newLikes: number,
+    isLiked: boolean
+  ) {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId ? { ...post, likes: newLikes } : post
+      )
+    );
   }
 
   if (loading) return <p className="p-4 text-white">Loading blog posts...</p>;
@@ -110,9 +263,7 @@ function Blog() {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="relative z-20">
-          <ModeToggle />
-        </div>
+        <div className="relative z-20"></div>
       </div>
 
       <div className="relative z-10 pt-20">
@@ -125,7 +276,7 @@ function Blog() {
             <h2 className="text-xl font-semibold mb-4 text-white">
               Create a New Blog Post
             </h2>
-            <form onSubmit={handleNewPost} className="space-y-4">
+            <div className="space-y-4">
               <input
                 type="text"
                 placeholder="Post Title"
@@ -151,13 +302,13 @@ function Blog() {
                 required
               ></textarea>
               <button
-                type="submit"
+                onClick={handleNewPost}
                 className="bg-white/10 text-white px-6 py-2 rounded border border-white/20 hover:bg-white/20 transition-all duration-300 disabled:opacity-50"
                 disabled={posting}
               >
                 {posting ? "Posting..." : "Submit Post"}
               </button>
-            </form>
+            </div>
           </section>
 
           {posts.map((post) => (
@@ -165,6 +316,7 @@ function Blog() {
               key={post.id}
               post={post}
               onDelete={() => handleDeletePost(post.id)}
+              onLikeUpdate={handleLikeUpdate}
             />
           ))}
         </div>

@@ -3,8 +3,7 @@ const Like = require("../models/likes");
 const likesController = {
   createLike: async (req, res) => {
     try {
-      const { postId } = req.params;
-      const authorId = req.user.id;
+      const { postId, authorId } = req.body;
 
       const existingLike = await Like.findOne({
         author: authorId,

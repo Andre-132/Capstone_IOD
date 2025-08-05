@@ -3,10 +3,8 @@ const Comment = require("../models/comments");
 const commentsController = {
   createComment: async (req, res) => {
     try {
-      const { content } = req.body;
-      const { postId } = req.params;
-      const authorId = req.user.id;
-
+      const { content, postId, authorId } = req.body;
+      console.log(content, "hit");
       if (!content || content.trim() === "") {
         return res.status(400).json({
           success: false,
@@ -19,6 +17,7 @@ const commentsController = {
         post: postId,
         author: authorId,
       });
+      console.log(comment, "flag");
 
       await comment.save();
 

@@ -1,7 +1,7 @@
 "use strict";
 const Mongoose = require("mongoose");
 
-const uri = process.env.DB_URI || "mongodb://localhost/blogDatabase";
+const uri = process.env.DB_URI || "mongodb://localhost/capstone";
 
 Mongoose.connect(uri)
   .then(() => console.log("MongoDB Connected"))

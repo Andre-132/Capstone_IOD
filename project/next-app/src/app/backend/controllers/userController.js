@@ -4,14 +4,14 @@ const usersController = {
   createUser: async (req, res) => {
     try {
       const { username, email } = req.body;
-
+      console.log("createUser hit");
       if (!username || !email) {
         return res.status(400).json({
           success: false,
           message: "Username and email are required",
         });
       }
-
+      console.log(username, email);
       const user = new User({
         username: username.trim(),
         email: email.trim(),

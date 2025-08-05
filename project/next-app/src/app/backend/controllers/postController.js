@@ -3,9 +3,10 @@ const Post = require("../models/posts");
 const postsController = {
   createPost: async (req, res) => {
     try {
-      const { title, content, description, image } = req.body;
-      const authorId = req.user.id;
-
+      const { title, content, description, image, authorId } = req.body;
+      //const authorId = req.user.id;
+      console.log("createPost", authorId);
+      console.log(content, "flag");
       if (!title || !content || !description || !image) {
         return res.status(400).json({
           success: false,
@@ -20,7 +21,7 @@ const postsController = {
         image: image.trim(),
         author: authorId,
       });
-
+      console.log(post);
       await post.save();
 
       res.status(201).json({

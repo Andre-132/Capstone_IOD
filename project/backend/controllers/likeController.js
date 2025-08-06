@@ -79,6 +79,30 @@ const likesController = {
       });
     }
   },
+
+  deleteLike: async (req, res) => {
+    try {
+      const { likeId } = req.params;
+      const like = await Like.findByIdAndDelete(likeId);
+      if (!like) {
+        return res.status(404).json({
+          success: false,
+          message: "Like not found",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Like deleted successfully",
+        like: like,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error deleting like",
+        error: error.message,
+      });
+    }
+  },
 };
 
 module.exports = likesController;

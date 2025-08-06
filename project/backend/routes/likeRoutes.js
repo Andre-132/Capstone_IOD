@@ -8,4 +8,6 @@ router.get("/post/:postId", likesController.getLikesByPost);
 
 router.get("/author/:authorId", likesController.getLikesByAuthor);
 
+router.delete("/:likeId", likesController.deleteLike);
+
 module.exports = router;

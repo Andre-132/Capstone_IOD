@@ -12,4 +12,6 @@ router.get("/author/:authorId", postsController.getPostsByAuthor);
 
 router.put("/:postId", postsController.updatePost);
 
+router.delete("/:postId", postsController.deletePost);
+
 module.exports = router;

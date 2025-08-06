@@ -115,6 +115,30 @@ const commentsController = {
       });
     }
   },
+
+  deleteComment: async (req, res) => {
+    try {
+      const { commentId } = req.params;
+      const comment = await Comment.findByIdAndDelete(commentId);
+      if (!comment) {
+        return res.status(404).json({
+          success: false,
+          message: "Comment not found",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Comment deleted successfully",
+        comment: comment,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error deleting comment",
+        error: error.message,
+      });
+    }
+  },
 };
 
 module.exports = commentsController;

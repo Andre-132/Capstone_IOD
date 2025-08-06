@@ -4,7 +4,6 @@ const postsController = {
   createPost: async (req, res) => {
     try {
       const { title, content, description, image, authorId } = req.body;
-      //const authorId = req.user.id;
       console.log("createPost", authorId);
       console.log(content, "flag");
       if (!title || !content || !description || !image) {
@@ -142,6 +141,30 @@ const postsController = {
       });
     }
   },
-};
 
+  deletePost: async (req, res) => {
+    console.log("DELETE POST HIT!");
+    try {
+      const { postId } = req.params;
+      const post = await Post.findByIdAndDelete(postId);
+      if (!post) {
+        return res.status(404).json({
+          success: false,
+          message: "Post not found",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Post deleted successfully",
+        post: post,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error deleting post",
+        error: error.message,
+      });
+    }
+  },
+};
 module.exports = postsController;
